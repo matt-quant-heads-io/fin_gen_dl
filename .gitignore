@@ -20,12 +20,21 @@ parts/
 sdist/
 var/
 wheels/
+neat-checkpoint-*
 pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
+.idea/*
+avg_fitness.svg
+best
+best.svg
+init_network
+init_network.svg
+notes.txt
+speciation.svg
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -127,3 +136,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+
