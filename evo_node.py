@@ -15,6 +15,8 @@ parser.add_argument('--hlayers', type=int, default=1)
 connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
 read_channel = connection.channel()
 read_channel.exchange_declare(exchange='evo_search_exchange', exchange_type='direct')
+write_channel = connection.channel()
+write_channel.exchange_declare(exchange='best_model_exchange', exchange_type='direct')
 
 # Create the mechanism for reading in pandas df
 inputs = [(0.0, 0.0), (0.0, 1.0), (1.0, 0.0), (1.0, 1.0)]
@@ -77,8 +79,14 @@ def run(config_file, hidden_layers, local_dir):
     visualize.plot_stats(stats, ylog=False, view=True)
     visualize.plot_species(stats, view=True)
 
-    p = neat.Checkpointer.restore_checkpoint(os.path.join(local_dir, 'checkpoints/neat-checkpoint-4'))
-    p.run(eval_genomes, 10)
+    try:
+        p = neat.Checkpointer.restore_checkpoint(os.path.join(local_dir, 'checkpoints/neat-checkpoint-4'))
+        p.run(eval_genomes, 10)
+    except:
+        return winner
+
+    return winner
+
 
 
 if __name__ == '__main__':
@@ -86,16 +94,24 @@ if __name__ == '__main__':
     args = parser.parse_args()
     hlayers = args.hlayers
     hlayers = "hl_{}".format(hlayers)
+    write_channel.queue_declare(queue="best_model", exclusive=False)
+    write_channel.queue_bind(exchange="best_model_exchange", queue="best_model")
+
 
     def callback(ch, method, properties, body):
         input_msg = json.loads(body)
         config_path = os.path.join(local_dir, f'configs/config-feedforward_{input_msg["hl_count"]}.py')
-        run(config_path, input_msg["hl_count"], local_dir)
+        best_model = run(config_path, input_msg["hl_count"], local_dir)
         print(f'Loading config-feedforward_{input_msg["hl_count"]} for toplogical search with {input_msg["hl_count"]} hidden layers.')
+        msg = json.dumps({'done': input_msg["hl_count"], 'winner': best_model['Fitness']})
+        write_channel.basic_publish(exchange='best_model_exchange', routing_key="best_model", body=msg)
+
+
 
 
     read_channel.queue_declare(queue=hlayers, exclusive=False)
     read_channel.queue_bind(exchange='evo_search_exchange', queue=hlayers, routing_key=hlayers)
+
 
     read_channel.basic_consume(queue=hlayers, on_message_callback=callback, auto_ack=True)
 
