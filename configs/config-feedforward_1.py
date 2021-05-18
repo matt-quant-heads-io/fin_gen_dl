@@ -47,7 +47,7 @@ node_delete_prob        = 0.5
 
 # network parameters - Change to fit our problem
 num_hidden              = 1
-num_inputs              = 2
+num_inputs              = 76
 num_outputs             = 1
 
 # node response options
@@ -72,7 +72,7 @@ weight_replace_rate     = 0.1
 compatibility_threshold = 3.0
 
 [DefaultStagnation]
-species_fitness_func = max
+species_fitness_func = mean
 max_stagnation       = 20
 species_elitism      = 2
 

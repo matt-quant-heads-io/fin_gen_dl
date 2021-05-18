@@ -119,6 +119,9 @@ ENV/
 env.bak/
 venv.bak/
 configs/*
+init_network*
+best*
+mattsdatatest.csv
 
 # Spyder project settings
 .spyderproject
