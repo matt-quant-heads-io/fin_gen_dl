@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[38]:
-
-
 # ~~~~ machine learning experimentation libraries ~~~~
 import pandas as pd
 import numpy as np
@@ -29,16 +23,10 @@ import boto3
 from io import StringIO
 
 
-# In[39]:
-
-
 import logging, os
 
 logging.disable(logging.WARNING)
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-
-
-# In[40]:
 
 
 lookahead = 2
@@ -46,9 +34,6 @@ lookback = 2
 batchsize = 200
 numunits = 100
 epochscount = 2
-
-
-# In[68]:
 
 
 def create_train_test_set(df=None, train_split=None,scale_data=True):
@@ -102,9 +87,6 @@ def create_train_test_set(df=None, train_split=None,scale_data=True):
     return Xtrain, Xtest, ytrain, ytest, train_test_split
 
 
-# In[69]:
-
-
 # note - update the batch size
 
 def create_model(output_units=lookahead, lr=0.0001, loss='mse', num_units=numunits,
@@ -124,9 +106,6 @@ def create_model(output_units=lookahead, lr=0.0001, loss='mse', num_units=numuni
                            input_shape=(n_inputs, n_features)))
             model.add(Dense(units=output_units, activation='linear'))
             
-            
-            
-#             # OLD
 #             model = Sequential()
 #             model.add(LSTM(units=num_units,
 #                            activation=activation_func,
@@ -134,9 +113,6 @@ def create_model(output_units=lookahead, lr=0.0001, loss='mse', num_units=numuni
 #             model.add(LeakyReLU(alpha=alpha))
 #             model.add(Dropout(dropout))
 #             model.add(Dense(units=output_units))
-            
-            
-            
 
             # Compiling the RNN
             model.compile(optimizer, loss)
@@ -147,10 +123,6 @@ def create_model(output_units=lookahead, lr=0.0001, loss='mse', num_units=numuni
     except Exception as e:
         msg = "Error in create_model"
         raise e(msg)
-
-
-# In[70]:
-
 
 # ~~~~ load and split the training and test data ~~~~
 
@@ -170,14 +142,8 @@ data = pd.read_csv(StringIO(csv_string), header=0)
 df = data
 
 
-# In[71]:
-
-
 train_split_size = 0.8
 Xtrain, Xtest, ytrain, ytest, train_test_split = create_train_test_set(df=df, train_split=train_split_size)
-
-
-# In[72]:
 
 
 # for i in range(10):
@@ -186,9 +152,6 @@ Xtrain, Xtest, ytrain, ytest, train_test_split = create_train_test_set(df=df, tr
 # #     print(y.shape)
 #     print('%s => %s' % (x, y))
 #     print(len(y))
-
-
-# In[78]:
 
 
 # baseline
@@ -211,9 +174,6 @@ for i in range(10):
     loss_res[i] = loss_val_per_epoch
 
 pd.DataFrame(loss_res).to_csv("baseline.csv")
-
-
-# In[92]:
 
 
 # update input/output parameters
@@ -253,10 +213,6 @@ for i in range(0,10):
 
 pd.DataFrame(loss_res).to_csv("0-10.csv")
 
-
-# In[93]:
-
-
 loss_res = np.zeros((10, epochscount))
 for i in range(10,20):
     
@@ -293,9 +249,6 @@ for i in range(10,20):
 pd.DataFrame(loss_res).to_csv("10-20.csv")
 
 
-# In[94]:
-
-
 loss_res = np.zeros((10, epochscount))
 for i in range(20,30):
     
@@ -328,9 +281,6 @@ for i in range(20,30):
     print(np.sum(loss_res))
 
 pd.DataFrame(loss_res).to_csv("20-30.csv")
-
-
-# In[95]:
 
 
 loss_res = np.zeros((10, epochscount))
@@ -367,9 +317,6 @@ for i in range(30,40):
 pd.DataFrame(loss_res).to_csv("30-40.csv")
 
 
-# In[96]:
-
-
 loss_res = np.zeros((10, epochscount))
 for i in range(40,50):
     
@@ -402,9 +349,6 @@ for i in range(40,50):
     print(np.sum(loss_res))
 
 pd.DataFrame(loss_res).to_csv("40-50.csv")
-
-
-# In[97]:
 
 
 loss_res = np.zeros((10, epochscount))
@@ -441,9 +385,6 @@ for i in range(50,60):
 pd.DataFrame(loss_res).to_csv("50-60.csv")
 
 
-# In[98]:
-
-
 loss_res = np.zeros((10, epochscount))
 for i in range(60,70):
     
@@ -478,9 +419,6 @@ for i in range(60,70):
 pd.DataFrame(loss_res).to_csv("60-70.csv")
 
 
-# In[99]:
-
-
 loss_res = np.zeros((10, epochscount))
 for i in range(70,74):
     
@@ -513,16 +451,3 @@ for i in range(70,74):
     print(np.sum(loss_res))
 
 pd.DataFrame(loss_res).to_csv("70-74.csv")
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
