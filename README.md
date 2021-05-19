@@ -1,4 +1,4 @@
-# fin_gen_dl
+# FinGenDL
 This repo is the implementation of our paper called "FinGenDL: A Framework for Evolving Time-series Based Neural Networks through Augmenting Topologies".
 
 ### Installation instructions
